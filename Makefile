@@ -2,15 +2,14 @@
 SRC = dummy_load-conf.c
 OBJ = $(SRC:%.c=%.so)
 
-dummy-agent.so: $(SRC)
-	gcc -shared -o dummy_load-conf.so $(SRC) -I../zabbix-src/include/ -fPIC
-#	gcc -shared -o dummy_load-conf.so $(SRC) -I../zabbix-src/include/ -fPIC
+$(OBJ): $(SRC)
+	gcc -shared -o $(OBJ) $(SRC) -I../zabbix-src/include/ -fPIC
 
 clean:
-	rm -f dummy_load-conf.so
+	rm -f $(OBJ)
 
-install:dummy_load-conf.so
+install: $(OBJ)
 	service zabbix-agent stop
-	\cp -p dummy_load-conf.so /etc/zabbix/modules/
+	\cp -p $(OBJ) /etc/zabbix/modules/
 	service zabbix-agent start
 
