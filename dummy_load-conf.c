@@ -34,7 +34,7 @@
 #include "module.h"
 #include "log.h"
 #include "common.h"
-#include"cfg.h"
+#include "cfg.h"
 
 
 extern unsigned char daemon_type ;
@@ -141,10 +141,6 @@ int	zbx_module_dummy_param2(AGENT_REQUEST *request, AGENT_RESULT *result)
 int	zbx_module_init()
 {
 	int ret = ZBX_MODULE_FAIL;
-
-
-	/* initialization for dummy.random */
-	srand(time(NULL));
 
 	/* determine daemon process */
 	switch (daemon_type){
