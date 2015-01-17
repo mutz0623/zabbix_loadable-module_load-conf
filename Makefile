@@ -10,6 +10,6 @@ clean:
 
 install: $(OBJ)
 	service zabbix-agent stop
-	\cp -p $(OBJ) /etc/zabbix/modules/
+	install $(OBJ) /etc/zabbix/modules/
 	service zabbix-agent start
 
