@@ -44,6 +44,16 @@ extern char *CONFIG_LOAD_MODULE_PATH ;
 #define MODULE_CONFIG_FILE_NAME "dummy_load-conf.conf"
 #define MODULE_NAME "zbx_module_load_config.so"
 
+// compatible for zabbix 2.X
+#ifndef ZBX_PROGRAM_TYPE_AGENT
+#define ZBX_PROGRAM_TYPE_AGENT ZBX_DAEMON_TYPE_AGENT
+#define ZBX_PROGRAM_TYPE_PROXY ZBX_DAEMON_TYPE_PROXY
+#define ZBX_PROGRAM_TYPE_PROXY_ACTIVE ZBX_DAEMON_TYPE_PROXY_ACTIVE
+#define ZBX_PROGRAM_TYPE_PROXY_PASSIVE ZBX_DAEMON_TYPE_PROXY_PASSIVE
+#define ZBX_PROGRAM_TYPE_SERVER ZBX_DAEMON_TYPE_SERVER
+#endif
+
+
 static void	zbx_module_load_config();
 static void	zbx_module_set_defaults(void);
 
@@ -144,17 +154,17 @@ int	zbx_module_init()
 
 	/* determine daemon process */
 	switch (daemon_type){
-		case ZBX_DAEMON_TYPE_SERVER:
+		case ZBX_PROGRAM_TYPE_SERVER:
 			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by server process. [%d]",MODULE_NAME, daemon_type);
 			ret = ZBX_MODULE_OK;
 			break;
-		case ZBX_DAEMON_TYPE_PROXY_ACTIVE:
-		case ZBX_DAEMON_TYPE_PROXY_PASSIVE:
-		case ZBX_DAEMON_TYPE_PROXY:
+		case ZBX_PROGRAM_TYPE_PROXY_ACTIVE:
+		case ZBX_PROGRAM_TYPE_PROXY_PASSIVE:
+		case ZBX_PROGRAM_TYPE_PROXY:
 			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by proxy process. [%d]", MODULE_NAME, daemon_type);
 			ret = ZBX_MODULE_OK;
 			break;
-		case ZBX_DAEMON_TYPE_AGENT:
+		case ZBX_PROGRAM_TYPE_AGENT:
 			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by agent process. [%d]", MODULE_NAME, daemon_type);
 			ret = ZBX_MODULE_OK;
 			break;
