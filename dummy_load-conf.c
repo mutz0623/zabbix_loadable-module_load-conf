@@ -30,30 +30,24 @@
 ** Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 **/
 
+#include "common.h"
+
 #include "sysinc.h"
 #include "module.h"
 #include "log.h"
-#include "common.h"
 #include "cfg.h"
 
 
-// compatible for zabbix 2.X
-#ifndef ZBX_PROGRAM_TYPE_AGENT
-#define program_type daemon_type
-#define ZBX_PROGRAM_TYPE_AGENT ZBX_DAEMON_TYPE_AGENT
-#define ZBX_PROGRAM_TYPE_PROXY ZBX_DAEMON_TYPE_PROXY
-#define ZBX_PROGRAM_TYPE_PROXY_ACTIVE ZBX_DAEMON_TYPE_PROXY_ACTIVE
-#define ZBX_PROGRAM_TYPE_PROXY_PASSIVE ZBX_DAEMON_TYPE_PROXY_PASSIVE
-#define ZBX_PROGRAM_TYPE_SERVER ZBX_DAEMON_TYPE_SERVER
-#endif
-
-//extern unsigned char program_type ;
+#if ZABBIX_VERSION_MAJOR <= 2
+extern unsigned char daemon_type ;
+#else
 extern unsigned char program_type ;
+#endif
 extern char *CONFIG_LOAD_MODULE_PATH ;
 
 
 #define MODULE_CONFIG_FILE_NAME "dummy_load-conf.conf"
-#define MODULE_NAME "zbx_module_load_config.so"
+#define MODULE_NAME "dummy_load-conf.so"
 
 
 static void	zbx_module_load_config();
@@ -154,26 +148,42 @@ int	zbx_module_init()
 {
 	int ret = ZBX_MODULE_FAIL;
 
+#if ZABBIX_VERSION_MAJOR <= 2
 	/* determine daemon process */
-	switch (program_type){
-		case ZBX_PROGRAM_TYPE_SERVER:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by server process. [%d]", MODULE_NAME, program_type);
+	switch (daemon_type){
+		case ZBX_DAEMON_TYPE_SERVER:
+			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by server process. [%d]", MODULE_NAME, daemon_type);
 			ret = ZBX_MODULE_OK;
 			break;
-		case ZBX_PROGRAM_TYPE_PROXY_ACTIVE:
-		case ZBX_PROGRAM_TYPE_PROXY_PASSIVE:
-		case ZBX_PROGRAM_TYPE_PROXY:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by proxy process. [%d]", MODULE_NAME, program_type);
+		case ZBX_DAEMON_TYPE_PROXY_ACTIVE:
+		case ZBX_DAEMON_TYPE_PROXY_PASSIVE:
+		case ZBX_DAEMON_TYPE_PROXY:
+			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by proxy process. [%d]", MODULE_NAME, daemon_type);
 			ret = ZBX_MODULE_OK;
 			break;
-		case ZBX_PROGRAM_TYPE_AGENT:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by agent process. [%d]", MODULE_NAME, program_type);
+		case ZBX_DAEMON_TYPE_AGENT:
+			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by agent process. [%d]", MODULE_NAME, daemon_type);
 			ret = ZBX_MODULE_OK;
 			break;
 		default:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] unknown pram program_type [%d]", MODULE_NAME, program_type );
+			zabbix_log(LOG_LEVEL_WARNING, "[%s] unknown value daemon_type [%d]", MODULE_NAME, daemon_type );
 	}
-
+#else
+	/* determine daemon process */
+	switch (program_type){
+		case ZBX_PROGRAM_TYPE_SERVER:
+		case ZBX_PROGRAM_TYPE_PROXY_ACTIVE:
+		case ZBX_PROGRAM_TYPE_PROXY_PASSIVE:
+		case ZBX_PROGRAM_TYPE_PROXY:
+		case ZBX_PROGRAM_TYPE_AGENTD:
+			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by %s process. [%d]",
+			              MODULE_NAME, get_program_type_string(program_type), program_type);
+			ret = ZBX_MODULE_OK;
+			break;
+		default:
+			zabbix_log(LOG_LEVEL_WARNING, "[%s] unknown value program_type [%d]", MODULE_NAME, program_type );
+	}
+#endif
 
 	// load config file
 	zbx_module_load_config();
