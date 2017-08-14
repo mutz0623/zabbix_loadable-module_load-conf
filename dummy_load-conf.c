@@ -37,24 +37,15 @@
 #include "log.h"
 #include "cfg.h"
 
+#include "config_load.h"
 
-#if ZABBIX_VERSION_MAJOR <= 2
-extern unsigned char daemon_type ;
-#else
 extern unsigned char program_type ;
-#endif
 extern char *CONFIG_LOAD_MODULE_PATH ;
 
 
 #define MODULE_CONFIG_FILE_NAME "dummy_load-conf.conf"
 #define MODULE_NAME "dummy_load-conf.so"
 
-
-static void	zbx_module_load_config();
-static void	zbx_module_set_defaults(void);
-
-int CONFIG_PARAM1 = 1; 
-char *CONFIG_PARAM2 = NULL; 
 
 
 /* the variable keeps timeout setting for item processing */
@@ -148,27 +139,6 @@ int	zbx_module_init()
 {
 	int ret = ZBX_MODULE_FAIL;
 
-#if ZABBIX_VERSION_MAJOR <= 2
-	/* determine daemon process */
-	switch (daemon_type){
-		case ZBX_DAEMON_TYPE_SERVER:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by server process. [%d]", MODULE_NAME, daemon_type);
-			ret = ZBX_MODULE_OK;
-			break;
-		case ZBX_DAEMON_TYPE_PROXY_ACTIVE:
-		case ZBX_DAEMON_TYPE_PROXY_PASSIVE:
-		case ZBX_DAEMON_TYPE_PROXY:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by proxy process. [%d]", MODULE_NAME, daemon_type);
-			ret = ZBX_MODULE_OK;
-			break;
-		case ZBX_DAEMON_TYPE_AGENT:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by agent process. [%d]", MODULE_NAME, daemon_type);
-			ret = ZBX_MODULE_OK;
-			break;
-		default:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] unknown value daemon_type [%d]", MODULE_NAME, daemon_type );
-	}
-#else
 	/* determine daemon process */
 	switch (program_type){
 		case ZBX_PROGRAM_TYPE_SERVER:
@@ -176,18 +146,16 @@ int	zbx_module_init()
 		case ZBX_PROGRAM_TYPE_PROXY_PASSIVE:
 		case ZBX_PROGRAM_TYPE_PROXY:
 		case ZBX_PROGRAM_TYPE_AGENTD:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] module loaded by %s process. [%d]",
+			zabbix_log(LOG_LEVEL_DEBUG, "[%s] module loaded by %s process. [%d]",
 			              MODULE_NAME, get_program_type_string(program_type), program_type);
 			ret = ZBX_MODULE_OK;
 			break;
 		default:
-			zabbix_log(LOG_LEVEL_WARNING, "[%s] unknown value program_type [%d]", MODULE_NAME, program_type );
+			zabbix_log(LOG_LEVEL_DEBUG, "[%s] unknown value program_type [%d]", MODULE_NAME, program_type );
 	}
-#endif
 
-	// load config file
+	// read parameter from config file
 	zbx_module_load_config();
-
 
 	return ret;
 }
@@ -206,51 +174,6 @@ int	zbx_module_init()
 int	zbx_module_uninit()
 {
 	return ZBX_MODULE_OK;
-}
-
-
-
-
-/*********************************************************************
- * zbx_module_load_config                                            *
- *********************************************************************/
-static void     zbx_module_load_config(void)
-{
-
-	char MODULE_CONFIG_FILE[256];
-
-	static struct cfg_line  module_cfg[] =
-	{
-	/* PARAMETER,                   VAR,				TYPE,
-                        MANDATORY,      MIN,			MAX */
-		{"Param1",              &CONFIG_PARAM1,			TYPE_INT,
-                        PARM_OPT,	1,			100},
-		{"Param2",              &CONFIG_PARAM2,			TYPE_STRING,
-                        PARM_MAND,	0,			0},
-		{NULL}
-	};
-
-
-	zbx_snprintf( MODULE_CONFIG_FILE, sizeof(MODULE_CONFIG_FILE), "%s/%s", CONFIG_LOAD_MODULE_PATH, MODULE_CONFIG_FILE_NAME);
-	zabbix_log(LOG_LEVEL_WARNING, "[%s] load conf:%s", MODULE_NAME, MODULE_CONFIG_FILE);
-
-	parse_cfg_file(MODULE_CONFIG_FILE, module_cfg, ZBX_CFG_FILE_REQUIRED, ZBX_CFG_STRICT);
-	zbx_module_set_defaults();
-
-
-}
-
-
-static void     zbx_module_set_defaults(void)
-{
-        if (NULL == &CONFIG_PARAM1){
-                CONFIG_PARAM1 = 1;
-	}
-
-        if (NULL == CONFIG_PARAM2){
-                CONFIG_PARAM2 = zbx_strdup(CONFIG_PARAM2, "hello");
-	}
-
 }
 
 
