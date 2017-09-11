@@ -42,8 +42,6 @@
 extern unsigned char program_type ;
 extern char *CONFIG_LOAD_MODULE_PATH ;
 
-#define MODULE_NAME "dummy_load-conf.so"
-
 /* the variable keeps timeout setting for item processing */
 static int	item_timeout = 0;
 
