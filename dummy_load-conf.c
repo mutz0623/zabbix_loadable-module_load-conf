@@ -112,7 +112,7 @@ int	zbx_module_dummy_param1(AGENT_REQUEST *request, AGENT_RESULT *result)
 int	zbx_module_dummy_param2(AGENT_REQUEST *request, AGENT_RESULT *result)
 {
 
-        SET_STR_RESULT(result, strdup(CONFIG_PARAM2));
+        SET_STR_RESULT(result, zbx_strdup(NULL, CONFIG_PARAM2));
 
 	return SYSINFO_RET_OK;
 }
