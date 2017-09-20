@@ -31,5 +31,6 @@ test:
 	md5sum  $(MODULEPATH)/$(TARGET) ./$(TARGET) || :
 	zabbix_agentd --test  dummy.param1
 	zabbix_agentd --test  dummy.param2
+	zabbix_agentd --test  dummy.LLD[2]
 
 
