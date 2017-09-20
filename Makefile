@@ -21,15 +21,15 @@ clean:
 	rm -f $(TARGET) $(OBJ)
 
 install:$(TARGET)
-	service zabbix-agent stop
 	install -C $(TARGET) $(MODULEPATH)
-	service zabbix-agent start
+
+restart:$(TARGET)
+	service zabbix-agent restart
 	service zabbix-agent status
 	tail /var/log/zabbix/zabbix_agentd.log
 
 test:
 	md5sum  $(MODULEPATH)/$(TARGET) ./$(TARGET) || :
-	zabbix_agentd --test  dummy.param1
-	zabbix_agentd --test  dummy.param2
+	zabbix_agentd --print |grep -e dummy.param1 -e dummy.param2
 
 
