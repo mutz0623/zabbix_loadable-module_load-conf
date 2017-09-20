@@ -52,7 +52,7 @@ static ZBX_METRIC keys[] =
 /*      KEY                     FLAG		FUNCTION        	TEST PARAMETERS */
 {
 	{"dummy.param1",		0,		zbx_module_dummy_param1,	NULL},
-	{"dummy.param2",		0,		zbx_module_dummy_param2,	"hello"},
+	{"dummy.param2",		0,		zbx_module_dummy_param2,	NULL},
 	{NULL}
 };
 
