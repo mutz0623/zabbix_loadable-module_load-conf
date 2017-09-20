@@ -134,7 +134,6 @@ int	zbx_module_dummy_LLD(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 	param = get_rparam(request, 0);
 
-	/* there is no strict validation of parameters for simplicity sake */
 	itemnum = atoi(param);
 
 	if ( itemnum  == 0 )
