@@ -30,6 +30,6 @@ restart:$(TARGET)
 
 test:
 	md5sum  $(MODULEPATH)/$(TARGET) ./$(TARGET) || :
-	zabbix_agentd --print |grep -e dummy.param1 -e dummy.param2
+	zabbix_agentd --print |grep -e dummy.param1 -e dummy.param2 -e dummy.LLD
 
 

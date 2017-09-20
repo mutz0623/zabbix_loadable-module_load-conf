@@ -36,6 +36,7 @@
 #include "module.h"
 #include "log.h"
 #include "cfg.h"
+#include "zbxjson.h"
 
 #include "config_load.h"
 
@@ -47,12 +48,14 @@ static int	item_timeout = 0;
 
 int	zbx_module_dummy_param1(AGENT_REQUEST *request, AGENT_RESULT *result);
 int	zbx_module_dummy_param2(AGENT_REQUEST *request, AGENT_RESULT *result);
+int	zbx_module_dummy_LLD(AGENT_REQUEST *request, AGENT_RESULT *result);
 
 static ZBX_METRIC keys[] =
 /*      KEY                     FLAG		FUNCTION        	TEST PARAMETERS */
 {
-	{"dummy.param1",		0,		zbx_module_dummy_param1,	NULL},
-	{"dummy.param2",		0,		zbx_module_dummy_param2,	NULL},
+	{"dummy.param1",	0,		zbx_module_dummy_param1,	NULL},
+	{"dummy.param2",	0,		zbx_module_dummy_param2,	NULL},
+	{"dummy.LLD",		CF_HAVEPARAMS,	zbx_module_dummy_LLD,		"3"},
 	{NULL}
 };
 
@@ -115,6 +118,54 @@ int	zbx_module_dummy_param2(AGENT_REQUEST *request, AGENT_RESULT *result)
 	return SYSINFO_RET_OK;
 }
 
+int	zbx_module_dummy_LLD(AGENT_REQUEST *request, AGENT_RESULT *result)
+{
+	char	*param;
+	int	itemnum;
+	struct	zbx_json j;
+	int	i;
+
+	if (1 != request->nparam)
+	{
+		/* set optional error message */
+		SET_MSG_RESULT(result, strdup("Invalid number of parameters."));
+		return SYSINFO_RET_FAIL;
+	}
+
+	param = get_rparam(request, 0);
+
+	itemnum = atoi(param);
+
+	if ( itemnum  == 0 )
+	{
+		SET_MSG_RESULT(result, strdup("Invalid value specified."));
+		return SYSINFO_RET_FAIL;
+	}
+
+	zbx_json_init(&j, ZBX_JSON_STAT_BUF_LEN);
+	zbx_json_addarray(&j, ZBX_PROTO_TAG_DATA);
+
+	for (i = 0; i < itemnum; i++)
+	{
+		zbx_json_addobject(&j, NULL);
+
+		zbx_json_adduint64(&j, "{#DUMMY.NUMBER}", i);
+		zbx_json_addstring(&j, "{#DUMMY.NAME}",
+		                   zbx_dsprintf(NULL, "dummy%03d/%03d", i, itemnum ),
+		                   ZBX_JSON_TYPE_STRING);
+
+		zbx_json_close(&j);
+	}
+
+	zbx_json_close(&j);
+
+
+        SET_STR_RESULT(result, zbx_strdup(NULL, j.buffer));
+
+	zbx_json_free(&j);
+
+	return SYSINFO_RET_OK;
+}
 
 /******************************************************************************
  *                                                                            *
