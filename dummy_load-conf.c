@@ -149,7 +149,7 @@ int	zbx_module_dummy_LLD(AGENT_REQUEST *request, AGENT_RESULT *result)
 	{
 		zbx_json_addobject(&j, NULL);
 
-		zbx_json_adduint64(&j, "{#DUMM.NUMBER}", i);
+		zbx_json_adduint64(&j, "{#DUMMY.NUMBER}", i);
 		zbx_json_addstring(&j, "{#DUMMY.NAME}",
 		                   zbx_dsprintf(NULL, "dummy%03d/%03d", i, itemnum ),
 		                   ZBX_JSON_TYPE_STRING);
