@@ -124,6 +124,7 @@ int	zbx_module_dummy_LLD(AGENT_REQUEST *request, AGENT_RESULT *result)
 	int	itemnum;
 	struct	zbx_json j;
 	int	i;
+	char	*str_tmp;
 
 	if (1 != request->nparam)
 	{
@@ -151,8 +152,9 @@ int	zbx_module_dummy_LLD(AGENT_REQUEST *request, AGENT_RESULT *result)
 
 		zbx_json_adduint64(&j, "{#DUMMY.NUMBER}", i);
 		zbx_json_addstring(&j, "{#DUMMY.NAME}",
-		                   zbx_dsprintf(NULL, "dummy%03d/%03d", i, itemnum ),
+		                   str_tmp = zbx_dsprintf(NULL, "dummy%03d/%03d", i, itemnum ),
 		                   ZBX_JSON_TYPE_STRING);
+		zbx_free(str_tmp);
 
 		zbx_json_close(&j);
 	}
