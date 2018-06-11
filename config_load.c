@@ -15,12 +15,12 @@ void     zbx_module_load_config(void)
 
 	static struct cfg_line  module_cfg[] =
 	{
-	/* PARAMETER,                   VAR,				TYPE,
-                        MANDATORY,      MIN,			MAX */
-		{"Param1",              &CONFIG_PARAM1,			TYPE_INT,
-                        PARM_OPT,	1,			100},
-		{"Param2",              &CONFIG_PARAM2,			TYPE_STRING,
-                        PARM_MAND,	0,			0},
+	/* PARAMETER,			VAR,			TYPE,
+                        MANDATORY,		MIN,			MAX */
+		{"Param1",              &CONFIG_PARAM1,		TYPE_INT,
+                        PARM_OPT,		1,			100},
+		{"Param2",              &CONFIG_PARAM2,		TYPE_STRING,
+                        PARM_MAND,		0,			0},
 		{NULL}
 	};
 
