@@ -21,7 +21,7 @@ void     zbx_module_load_config(void)
                         PARM_OPT,		1,			100},
 		{"Param2",              &CONFIG_PARAM2,		TYPE_STRING,
                         PARM_MAND,		0,			0},
-		{NULL}
+		{NULL, NULL, 0,0,0,0}
 	};
 
 

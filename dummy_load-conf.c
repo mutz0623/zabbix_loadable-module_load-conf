@@ -56,7 +56,7 @@ static ZBX_METRIC keys[] =
 	{"dummy.param1",	0,		zbx_module_dummy_param1,	NULL},
 	{"dummy.param2",	0,		zbx_module_dummy_param2,	NULL},
 	{"dummy.LLD",		CF_HAVEPARAMS,	zbx_module_dummy_LLD,		"3"},
-	{NULL}
+	{NULL, 0, 0, NULL}
 };
 
 /******************************************************************************
@@ -102,7 +102,7 @@ ZBX_METRIC	*zbx_module_item_list()
 	return keys;
 }
 
-int	zbx_module_dummy_param1(AGENT_REQUEST *request, AGENT_RESULT *result)
+int	zbx_module_dummy_param1(AGENT_REQUEST *request __attribute__((unused)), AGENT_RESULT *result)
 {
 
 	SET_UI64_RESULT(result, CONFIG_PARAM1);
@@ -110,7 +110,7 @@ int	zbx_module_dummy_param1(AGENT_REQUEST *request, AGENT_RESULT *result)
 	return SYSINFO_RET_OK;
 }
 
-int	zbx_module_dummy_param2(AGENT_REQUEST *request, AGENT_RESULT *result)
+int	zbx_module_dummy_param2(AGENT_REQUEST *request __attribute__((unused)), AGENT_RESULT *result)
 {
 
         SET_STR_RESULT(result, zbx_strdup(NULL, CONFIG_PARAM2));

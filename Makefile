@@ -1,6 +1,6 @@
 
 CC = gcc
-CFLAG = -Wall -O3
+CFLAG = -Wall -Wextra -O3
 SRC = dummy_load-conf.c config_load.c
 HDR = config_load.h
 OBJ = $(SRC:%.c=%.o)
