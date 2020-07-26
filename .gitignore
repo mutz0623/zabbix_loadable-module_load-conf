@@ -1,2 +1,6 @@
-*.so
-*.o
+bin/*.so
+obj/*.d
+obj/*.o
+doc/html/*
+doc/scan-build/*
+core.*
