@@ -61,7 +61,4 @@ scan-build-clean:
 
 .PHONY: clean-all
 clean-all: clean doc-clean scan-build-clean
-	$(MAKE) clean
-	$(MAKE) doc-clean
-	$(MAKE) scan-build-clean
 
